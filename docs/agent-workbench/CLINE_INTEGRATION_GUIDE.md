@@ -4,7 +4,9 @@ This document describes the integration points needed to turn the current platfo
 
 ## 1. CLI command routing
 
-The Cline CLI now includes a `workbench` subcommand through `sdk/apps/cli/src/commands/workbench.ts` and the `@xexe/platform/cli` adapter.
+The Cline CLI now includes a direct `workbench` route in `sdk/apps/cli/src/index.ts` before the full Cline runtime boots. This keeps workbench commands lightweight and avoids loading provider/session runtime code for simple project operations.
+
+The route delegates to `sdk/apps/cli/src/commands/workbench.ts`, which calls `@xexe/platform/cli`.
 
 Expected usage after local build:
 
@@ -16,25 +18,6 @@ cline workbench task list
 cline workbench workspace sync
 cline workbench workspace query auth
 cline workbench memory context
-```
-
-If a downstream branch does not yet include the `main.ts` route, add this near the existing `kanban` command:
-
-```ts
-program
-  .command("workbench")
-  .description("Run XEXE Agent Workbench commands")
-  .allowUnknownOption()
-  .allowExcessArguments()
-  .passThroughOptions()
-  .action(async (_opts: unknown, cmd: Command) => {
-    const { runWorkbenchCommand } = await import("./commands/workbench");
-    ctx.exitCode = await runWorkbenchCommand({
-      args: cmd.args,
-      cwd: process.cwd(),
-      io,
-    });
-  });
 ```
 
 ## 2. Desktop-first UI

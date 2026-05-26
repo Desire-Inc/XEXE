@@ -8,7 +8,7 @@ import {
 	cleanupActiveRuntime,
 	isAbortInProgress,
 } from "./runtime/active-runtime";
-import { writeErr } from "./utils/output";
+import { writeErr, writeln } from "./utils/output";
 
 // Initialize VCR before any HTTP requests are made.
 // Set CLINE_VCR=record|playback and CLINE_VCR_CASSETTE=<path> to enable.
@@ -64,8 +64,17 @@ if (!isMainThread) {
 
 		let exitCode = 0;
 		try {
-			const { runCli } = await import("./main");
-			await runCli();
+			if (process.argv[2] === "workbench") {
+				const { runWorkbenchCommand } = await import("./commands/workbench");
+				exitCode = await runWorkbenchCommand({
+					args: process.argv.slice(3),
+					cwd: process.cwd(),
+					io: { writeln, writeErr },
+				});
+			} else {
+				const { runCli } = await import("./main");
+				await runCli();
+			}
 		} catch (err) {
 			logCliProcessError("runCli", err);
 			writeErr(err instanceof Error ? err.message : String(err));
