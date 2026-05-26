@@ -1,3 +1,4 @@
+import { createDesktopShellState, type DesktopShellState } from "../desktop/DesktopShell";
 import { buildKanbanBoard, type KanbanBoard } from "../kanban/KanbanBoard";
 import type { ReviewReport } from "../review/ReviewReport";
 import type { WorkbenchTask } from "../tasks/Task";
@@ -5,6 +6,7 @@ import type { WorkbenchTask } from "../tasks/Task";
 export type WorkbenchViewModel = {
 	tasks: WorkbenchTask[];
 	kanban: KanbanBoard;
+	desktop: DesktopShellState;
 	selectedTask?: WorkbenchTask;
 	review?: ReviewReport;
 	stats: {
@@ -19,6 +21,7 @@ export function createWorkbenchViewModel(tasks: WorkbenchTask[], selectedTaskId?
 	return {
 		tasks,
 		kanban: buildKanbanBoard(tasks),
+		desktop: createDesktopShellState({ tasks, activeTaskId: selectedTaskId, review }),
 		selectedTask: selectedTaskId ? tasks.find((task) => task.id === selectedTaskId) : undefined,
 		review,
 		stats: {
