@@ -1,6 +1,7 @@
 export * from "./agents/AgentRole";
 export * from "./approvals/ApprovalPolicy";
 export * from "./automation/Automation";
+export * from "./automation/AutomationDaemon";
 export * from "./automation/AutomationRegistry";
 export * from "./automation/AutomationStore";
 export * from "./automation/AutomationTemplates";
