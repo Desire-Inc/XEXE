@@ -77,8 +77,8 @@ export function runCommand(command: string, args: string[], cwd: string): Promis
 		const child = spawn(command, args, { cwd, shell: false });
 		const stdout: Buffer[] = [];
 		const stderr: Buffer[] = [];
-		child.stdout.on("data", (chunk) => stdout.push(Buffer.from(chunk)));
-		child.stderr.on("data", (chunk) => stderr.push(Buffer.from(chunk)));
+		child.stdout?.on("data", (chunk) => stdout.push(Buffer.from(chunk)));
+		child.stderr?.on("data", (chunk) => stderr.push(Buffer.from(chunk)));
 		child.on("error", reject);
 		child.on("close", (exitCode) => {
 			resolveResult({

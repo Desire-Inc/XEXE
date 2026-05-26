@@ -88,16 +88,18 @@ export class WorkspaceIndexer {
 	}
 }
 
+function captureGroupValues(matches: IterableIterator<RegExpMatchArray>): string[] {
+	return [...new Set([...matches].flatMap((match) => (match[1] ? [match[1]] : [])))];
+}
+
 function extractImports(content: string): string[] {
-	const matches = content.matchAll(/(?:import|from)\s+(?:[^"']*?\s+from\s+)?["']([^"']+)["']/g);
-	return [...new Set([...matches].map((match) => match[1]).filter(Boolean))];
+	return captureGroupValues(content.matchAll(/(?:import|from)\s+(?:[^"']*?\s+from\s+)?["']([^"']+)["']/g));
 }
 function extractExports(content: string): string[] {
-	const matches = content.matchAll(/export\s+(?:class|function|const|type|interface|enum)\s+([A-Za-z0-9_]+)/g);
-	return [...new Set([...matches].map((match) => match[1]).filter(Boolean))];
+	return captureGroupValues(content.matchAll(/export\s+(?:class|function|const|type|interface|enum)\s+([A-Za-z0-9_]+)/g));
 }
 function extractHeadings(content: string): string[] {
-	return [...content.matchAll(/^#{1,6}\s+(.+)$/gm)].map((match) => match[1].trim()).filter(Boolean);
+	return captureGroupValues(content.matchAll(/^#{1,6}\s+(.+)$/gm)).map((heading) => heading.trim()).filter(Boolean);
 }
 function tokenize(text: string): string[] {
 	return text.toLowerCase().split(/[^a-z0-9_/-]+/).filter((term) => term.length > 1);
