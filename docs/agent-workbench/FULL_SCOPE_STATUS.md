@@ -2,7 +2,7 @@
 
 ## Current head
 
-`51d27941ef6aad890defb803e278a170d41bd5bc`
+`pending next commit after bf7ea818a2a42d7873d5f24803e16d73d0094f16`
 
 ## Done in this PR
 
@@ -11,25 +11,25 @@
 - `@xexe/desktop` exists.
 - Workbench CLI exists.
 - Desktop shell/controller/runtime abstractions exist.
+- A real Node desktop host adapter exists as the bridge target for Tauri/Electron/Wails host APIs.
 - Task/worktree/workspace/memory foundations exist.
 - Automation daemon/runner/background worker foundations exist.
-- PR draft and live GitHub PR client foundations exist.
+- Desktop background process entrypoint exists.
+- PR draft, live GitHub PR client, and task-to-PR workflow foundations exist.
 - Runtime bridge and Cline runtime bridge foundations exist.
-- Provider/MCP bridge extension points exist.
-- Workspace intelligence now includes import graph, file ranking, and related-test suggestions.
+- Provider settings bridge and MCP manager bridge extension points exist.
+- Workspace intelligence includes import graph, file ranking, and related-test suggestions.
 - Bug-hunt policy invariant report exists.
 
-## Still not fully done
+## Deferred until CI/log phase
 
-The project is still not a finished shipped desktop app. The remaining items require either local execution/log access or direct product-runtime binding:
+The user chose to leave CI errors for the end. Remaining work after this batch is validation and exact runtime binding polish:
 
 1. Fix exact CI failures from GitHub Actions logs or local `bun` runs.
-2. Pass a real CLI `Config` into `createClineCliRuntimeBridge()` from the normal CLI bootstrap path.
-3. Bind provider router entries to Cline provider settings at runtime.
-4. Bind MCP registry entries to the live Cline MCP manager at runtime.
-5. Replace the memory desktop host with Tauri/Electron/Wails implementation.
-6. Run the background worker as a supervised desktop/daemon process.
-7. Use `GitHubPullRequestClient` after commit/push to create live PRs from tasks.
+2. Wire `createClineCliRuntimeBridge(config)` into the normal CLI bootstrap path for live workbench execution.
+3. Provide concrete adapters for Cline's internal provider settings manager and MCP manager if their APIs change.
+4. Wrap `NodeDesktopHost` behind the selected desktop framework APIs.
+5. Run the background process as a supervised desktop/daemon service.
 
 ## Validation
 
