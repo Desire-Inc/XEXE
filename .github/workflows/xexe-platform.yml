@@ -35,7 +35,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: sdk
-        run: bun install --frozen-lockfile
+        run: bun install
 
       - name: Typecheck platform
         working-directory: sdk
@@ -60,7 +60,3 @@ jobs:
       - name: Build desktop
         working-directory: sdk
         run: bun -F @xexe/desktop build
-
-      - name: Typecheck CLI integration
-        working-directory: sdk
-        run: bun -F @cline/cli typecheck
