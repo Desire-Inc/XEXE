@@ -23,6 +23,7 @@ export * from "./integrations/WorkbenchRuntimeBridge";
 export * from "./kanban/KanbanBoard";
 export * from "./mcp/McpRegistry";
 export * from "./memory/MemoryLoader";
+export * from "./orchestration/EndToEndTaskWorkflow";
 export * from "./orchestration/LiveWorkbenchOrchestrator";
 export * from "./orchestration/WorkbenchOrchestrator";
 export * from "./providers/ProviderRouter";

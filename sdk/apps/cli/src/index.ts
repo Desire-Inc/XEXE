@@ -48,8 +48,6 @@ if (!isMainThread) {
 	});
 	process.on("unhandledRejection", (reason, promise) => {
 		if (isAbortInProgress()) {
-			// Mark the promise as handled so OpenTUI's error overlay
-			// does not surface expected abort-related rejections.
 			promise.catch(() => {});
 			return;
 		}
@@ -66,10 +64,12 @@ if (!isMainThread) {
 		try {
 			if (process.argv[2] === "workbench") {
 				const { runWorkbenchCommand } = await import("./commands/workbench");
+				const { createClineCliProcessRuntimeBridge } = await import("./commands/workbench-runtime");
 				exitCode = await runWorkbenchCommand({
 					args: process.argv.slice(3),
 					cwd: process.cwd(),
 					io: { writeln, writeErr },
+					workbench: { runtimeBridge: createClineCliProcessRuntimeBridge() },
 				});
 			} else {
 				const { runCli } = await import("./main");
