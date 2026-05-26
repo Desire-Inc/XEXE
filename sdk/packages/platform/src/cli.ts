@@ -4,21 +4,23 @@ import { AutomationDaemon } from "./automation/AutomationDaemon";
 import { AutomationStore } from "./automation/AutomationStore";
 import { DEFAULT_AGENT_ROLES, listAgentRoles, type AgentRoleId } from "./agents/AgentRole";
 import { MemoryLoader } from "./memory/MemoryLoader";
-import { WorkbenchOrchestrator } from "./orchestration/WorkbenchOrchestrator";
+import { WorkbenchOrchestrator, type WorkbenchOrchestratorOptions } from "./orchestration/WorkbenchOrchestrator";
 import { TaskStore } from "./tasks/TaskStore";
 import { WorkspaceIndexer } from "./workspace/WorkspaceIndexer";
 import { WorktreeManager } from "./worktrees/WorktreeManager";
 
-export async function runWorkbenchCli(argv = process.argv.slice(2), root = cwd()): Promise<number> {
+export type WorkbenchCliOptions = Partial<Omit<WorkbenchOrchestratorOptions, "root">>;
+
+export async function runWorkbenchCli(argv = process.argv.slice(2), root = cwd(), options: WorkbenchCliOptions = {}): Promise<number> {
 	const [command, subcommand, ...rest] = argv;
 	try {
 		switch (command) {
 			case undefined:
 			case "help":
 			case "--help": printHelp(); return 0;
-			case "doctor": return doctor(root);
+			case "doctor": return doctor(root, options);
 			case "agents": console.log(JSON.stringify(listAgentRoles(), null, "\t")); return 0;
-			case "task": return taskCommand(subcommand, rest, root);
+			case "task": return taskCommand(subcommand, rest, root, options);
 			case "workspace": return workspaceCommand(subcommand, rest, root);
 			case "memory": return memoryCommand(subcommand, root);
 			case "automation": return automationCommand(subcommand, rest, root);
@@ -30,15 +32,19 @@ export async function runWorkbenchCli(argv = process.argv.slice(2), root = cwd()
 	}
 }
 
-async function doctor(root: string): Promise<number> {
-	const orchestrator = new WorkbenchOrchestrator({ root });
+function createOrchestrator(root: string, options: WorkbenchCliOptions): WorkbenchOrchestrator {
+	return new WorkbenchOrchestrator({ root, ...options });
+}
+
+async function doctor(root: string, options: WorkbenchCliOptions): Promise<number> {
+	const orchestrator = createOrchestrator(root, options);
 	console.log(JSON.stringify(await orchestrator.doctor(), null, "\t"));
 	return 0;
 }
 
-async function taskCommand(subcommand: string | undefined, args: string[], root: string): Promise<number> {
+async function taskCommand(subcommand: string | undefined, args: string[], root: string, options: WorkbenchCliOptions): Promise<number> {
 	const store = new TaskStore({ rootDir: root });
-	const orchestrator = new WorkbenchOrchestrator({ root });
+	const orchestrator = createOrchestrator(root, options);
 	switch (subcommand) {
 		case "create": {
 			const title = args.join(" ").trim();

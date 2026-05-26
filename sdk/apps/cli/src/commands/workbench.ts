@@ -1,4 +1,4 @@
-import { runWorkbenchCli } from "@xexe/platform/cli";
+import { runWorkbenchCli, type WorkbenchCliOptions } from "@xexe/platform/cli";
 
 export type WorkbenchCommandIo = {
 	writeln: (message: string) => void;
@@ -9,6 +9,7 @@ export type RunWorkbenchCommandOptions = {
 	args: string[];
 	cwd: string;
 	io: WorkbenchCommandIo;
+	workbench?: WorkbenchCliOptions;
 };
 
 export async function runWorkbenchCommand(options: RunWorkbenchCommandOptions): Promise<number> {
@@ -17,7 +18,7 @@ export async function runWorkbenchCommand(options: RunWorkbenchCommandOptions): 
 	try {
 		console.log = (...args: unknown[]) => options.io.writeln(args.map(String).join(" "));
 		console.error = (...args: unknown[]) => options.io.writeErr(args.map(String).join(" "));
-		return await runWorkbenchCli(options.args, options.cwd);
+		return await runWorkbenchCli(options.args, options.cwd, options.workbench);
 	} finally {
 		console.log = originalLog;
 		console.error = originalError;

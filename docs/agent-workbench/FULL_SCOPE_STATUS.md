@@ -1,62 +1,45 @@
-# XEXE Full Scope Status
+# XEXE Agent Workbench — Full Scope Status
 
-This branch now contains a broad desktop-first platform foundation for the XEXE vision. It still requires deeper runtime/renderer integration and validation before it can honestly be called a complete finished product.
+## Current head
 
-## Added in this branch
+`51d27941ef6aad890defb803e278a170d41bd5bc`
 
-- Platform package: `@xexe/platform`
-- Desktop package foundation: `@xexe/desktop`
-- Task orchestration foundation
-- Worktree management foundation
-- Workspace repo-map indexer
-- Memory/rules/skills loader
-- Agent role registry
-- Provider router foundation
-- MCP registry foundation
-- Tool approval and risk policy foundation
-- Runtime event model and planning-only runtime
-- Runtime bridge scaffold for Cline handoff
-- Provider/MCP bridge scaffold
-- Pull request draft service
-- Git diff/commit service
-- Test runner wrapper
-- Review report model
-- Release checklist model
-- Desktop panel model and shell state
-- Desktop command palette model
-- Desktop command router tests
-- Kanban board model
-- Automation templates, registry, run snapshots, and store primitives
-- GitHub automation decision helper
-- Custom distribution model
-- Secret scanner
-- Shell `:` prefix parser and zsh shim renderer
-- CLI adapter for existing Cline CLI
-- Cline CLI command adapter at `sdk/apps/cli/src/commands/workbench.ts`
-- Tests for key pure modules
-- GitHub Actions workflow for platform and desktop validation
+## Done in this PR
 
-## Product direction
+- Desktop-first direction is codified.
+- `@xexe/platform` exists.
+- `@xexe/desktop` exists.
+- Workbench CLI exists.
+- Desktop shell/controller/runtime abstractions exist.
+- Task/worktree/workspace/memory foundations exist.
+- Automation daemon/runner/background worker foundations exist.
+- PR draft and live GitHub PR client foundations exist.
+- Runtime bridge and Cline runtime bridge foundations exist.
+- Provider/MCP bridge extension points exist.
+- Workspace intelligence now includes import graph, file ranking, and related-test suggestions.
+- Bug-hunt policy invariant report exists.
 
-XEXE is desktop-first. VS Code is upstream compatibility/reference context only. The target product is a standalone desktop app with IDE/editor, terminal, CLI command palette, Git, Kanban, agents, MCP, providers, diff/review/tests, release/rollback, browser preview, and automation history embedded in one workbench.
+## Still not fully done
 
-## Still not truly complete
+The project is still not a finished shipped desktop app. The remaining items require either local execution/log access or direct product-runtime binding:
 
-The following are intentionally modeled but not fully wired into runtime/UI yet:
+1. Fix exact CI failures from GitHub Actions logs or local `bun` runs.
+2. Pass a real CLI `Config` into `createClineCliRuntimeBridge()` from the normal CLI bootstrap path.
+3. Bind provider router entries to Cline provider settings at runtime.
+4. Bind MCP registry entries to the live Cline MCP manager at runtime.
+5. Replace the memory desktop host with Tauri/Electron/Wails implementation.
+6. Run the background worker as a supervised desktop/daemon process.
+7. Use `GitHubPullRequestClient` after commit/push to create live PRs from tasks.
 
-- Desktop renderer/runtime host such as Tauri, Electron, Wails, or equivalent
-- Live Cline `runAgent()` execution from `WorkbenchOrchestrator.startTask()`
-- Live provider execution via `ProviderRouter`
-- Live MCP client lifecycle using `McpRegistry`
-- Real background/cloud agent execution daemon
-- Real PR creation from task state
-- Full local validation and bug hunt across the entire upstream Cline repo
+## Validation
 
-## Next implementation cut
-
-1. Wire the desktop renderer to `@xexe/desktop` shell state and routing.
-2. Connect `WorkbenchOrchestrator.startTask()` to Cline's `runAgent` flow.
-3. Persist automation registry and runs through the daemon.
-4. Bind `ProviderRouter` and `McpRegistry` to live Cline managers.
-5. Implement PR creation when a task reaches `ready_to_pr`.
-6. Run CI/local validation and fix type/test failures.
+```bash
+cd sdk
+bun install
+bun -F @xexe/platform typecheck
+bun -F @xexe/platform test
+bun -F @xexe/platform build
+bun -F @xexe/desktop typecheck
+bun -F @xexe/desktop test
+bun -F @xexe/desktop build
+```
