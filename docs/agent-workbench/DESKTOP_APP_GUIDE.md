@@ -22,6 +22,13 @@ The desktop app should embed the complete workbench experience so the user can c
 
 Do not prioritize VS Code UI work for XEXE. VS Code may remain an upstream Cline compatibility/reference surface, but XEXE's product UX should be a standalone desktop application with all major coding-agent workflows built in.
 
+## Current implementation
+
+- `sdk/packages/platform/src/desktop/DesktopModel.ts` defines panels and layout.
+- `sdk/packages/platform/src/desktop/DesktopShell.ts` derives shell state from tasks, Kanban, reviews, and automation runs.
+- `sdk/packages/platform/src/ui/DesktopWorkbenchCommands.ts` defines the desktop command palette.
+- `sdk/apps/desktop` is the desktop app package foundation.
+
 ## Recommended desktop sequence
 
 1. Desktop shell with panels and routing.
