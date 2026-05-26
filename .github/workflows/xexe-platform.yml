@@ -1,0 +1,66 @@
+name: XEXE Platform
+
+on:
+  pull_request:
+    paths:
+      - "sdk/packages/platform/**"
+      - "sdk/apps/desktop/**"
+      - "sdk/apps/cli/**"
+      - ".agent/**"
+      - "docs/agent-workbench/**"
+      - ".github/workflows/xexe-platform.yml"
+  push:
+    branches:
+      - agent-workbench-platform
+    paths:
+      - "sdk/packages/platform/**"
+      - "sdk/apps/desktop/**"
+      - "sdk/apps/cli/**"
+      - ".agent/**"
+      - "docs/agent-workbench/**"
+      - ".github/workflows/xexe-platform.yml"
+
+jobs:
+  platform:
+    name: Platform checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.13
+
+      - name: Install dependencies
+        working-directory: sdk
+        run: bun install --frozen-lockfile
+
+      - name: Typecheck platform
+        working-directory: sdk
+        run: bun -F @xexe/platform typecheck
+
+      - name: Test platform
+        working-directory: sdk
+        run: bun -F @xexe/platform test
+
+      - name: Build platform
+        working-directory: sdk
+        run: bun -F @xexe/platform build
+
+      - name: Typecheck desktop
+        working-directory: sdk
+        run: bun -F @xexe/desktop typecheck
+
+      - name: Test desktop
+        working-directory: sdk
+        run: bun -F @xexe/desktop test
+
+      - name: Build desktop
+        working-directory: sdk
+        run: bun -F @xexe/desktop build
+
+      - name: Typecheck CLI integration
+        working-directory: sdk
+        run: bun -F @cline/cli typecheck
