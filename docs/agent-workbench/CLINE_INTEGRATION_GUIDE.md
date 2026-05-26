@@ -1,10 +1,24 @@
 # Cline Integration Guide for XEXE Workbench
 
-This document describes the exact integration points needed to turn the current platform foundation into a first-class Cline feature.
+This document describes the integration points needed to turn the current platform foundation into a first-class Cline feature.
 
 ## 1. CLI command routing
 
-Add a `workbench` subcommand to `sdk/apps/cli/src/main.ts` near the existing `kanban` command:
+The Cline CLI now includes a `workbench` subcommand through `sdk/apps/cli/src/commands/workbench.ts` and the `@xexe/platform/cli` adapter.
+
+Expected usage after local build:
+
+```bash
+cline workbench doctor
+cline workbench agents
+cline workbench task create "Implement auth flow"
+cline workbench task list
+cline workbench workspace sync
+cline workbench workspace query auth
+cline workbench memory context
+```
+
+If a downstream branch does not yet include the `main.ts` route, add this near the existing `kanban` command:
 
 ```ts
 program
@@ -23,18 +37,21 @@ program
   });
 ```
 
-This is intentionally separated from the large `main.ts` runtime so the command can be reviewed and inserted safely.
+## 2. Desktop-first UI
 
-## 2. VS Code commands
+XEXE's product surface is the standalone desktop app, not a VS Code extension.
 
-Use `VSCODE_WORKBENCH_COMMANDS` from `@xexe/platform` to add package contributions:
+Recommended sequence:
 
-- `xexe.workbench.openKanban`
-- `xexe.workbench.createTask`
-- `xexe.workbench.syncWorkspace`
-- `xexe.workbench.reviewTask`
-
-Start with command palette commands before adding a full webview.
+1. Desktop shell with panels and command routing.
+2. Workspace picker and embedded terminal.
+3. File explorer and editor/IDE surface.
+4. Task Kanban backed by `TaskStore`.
+5. Diff/test/review panels backed by `GitDiffService`, `TestRunner`, and `ReviewReport`.
+6. Agent runner panel connected to `WorkbenchOrchestrator`.
+7. MCP registry and provider settings.
+8. Automation runs and background task history.
+9. GitHub PR creation from ready tasks.
 
 ## 3. Cline runtime handoff
 
@@ -54,12 +71,6 @@ The current `ProviderRouter` selects providers by capability/cost/privacy. Next 
 
 The current `McpRegistry` models MCP server configs and validation. Next step is binding it to Cline's existing MCP server manager.
 
-## 6. UI
+## 6. PR automation
 
-Recommended sequence:
-
-1. Command palette actions.
-2. Simple TreeDataProvider for tasks.
-3. Webview Kanban board.
-4. Diff/test/review side panels.
-5. Background run history.
+`PullRequestService` can draft PR titles/bodies from task metadata, tests, risks, and review reports. The next runtime step is to connect that draft to the live GitHub integration when a task reaches `ready_to_pr`.
