@@ -24,5 +24,20 @@ export function parseShellPrefix(input: string): { command: string; prompt: stri
 }
 
 export function renderZshShim(binary = "xexe"): string {
-	return `# XEXE shell prefix shim\n# Add to ~/.zshrc after installing xexe.\nfunction xexe_colon_prefix() {\n  if [[ $BUFFER == :* ]]; then\n    local prompt=\"${BUFFER#:}\"\n    BUFFER=\"${binary} shell \\\"$prompt\\\"\"\n    zle accept-line\n  else\n    zle accept-line\n  fi\n}\nzle -N xexe_colon_prefix\nbindkey '^M' xexe_colon_prefix\n`;
+	return [
+		"# XEXE shell prefix shim",
+		"# Add to ~/.zshrc after installing xexe.",
+		"function xexe_colon_prefix() {",
+		"  if [[ $BUFFER == :* ]]; then",
+		"    local prompt=\"${BUFFER#:}\"",
+		`    BUFFER="${binary} shell \\\"$prompt\\\""`,
+		"    zle accept-line",
+		"  else",
+		"    zle accept-line",
+		"  fi",
+		"}",
+		"zle -N xexe_colon_prefix",
+		"bindkey '^M' xexe_colon_prefix",
+		"",
+	].join("\n");
 }
