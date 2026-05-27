@@ -8,7 +8,7 @@ import {
 	cleanupActiveRuntime,
 	isAbortInProgress,
 } from "./runtime/active-runtime";
-import { writeErr } from "./utils/output";
+import { writeErr, writeln } from "./utils/output";
 
 // Initialize VCR before any HTTP requests are made.
 // Set CLINE_VCR=record|playback and CLINE_VCR_CASSETTE=<path> to enable.
@@ -48,8 +48,6 @@ if (!isMainThread) {
 	});
 	process.on("unhandledRejection", (reason, promise) => {
 		if (isAbortInProgress()) {
-			// Mark the promise as handled so OpenTUI's error overlay
-			// does not surface expected abort-related rejections.
 			promise.catch(() => {});
 			return;
 		}
@@ -64,8 +62,19 @@ if (!isMainThread) {
 
 		let exitCode = 0;
 		try {
-			const { runCli } = await import("./main");
-			await runCli();
+			if (process.argv[2] === "workbench") {
+				const { runWorkbenchCommand } = await import("./commands/workbench");
+				const { createClineCliProcessRuntimeBridge } = await import("./commands/workbench-runtime");
+				exitCode = await runWorkbenchCommand({
+					args: process.argv.slice(3),
+					cwd: process.cwd(),
+					io: { writeln, writeErr },
+					workbench: { runtimeBridge: createClineCliProcessRuntimeBridge() },
+				});
+			} else {
+				const { runCli } = await import("./main");
+				await runCli();
+			}
 		} catch (err) {
 			logCliProcessError("runCli", err);
 			writeErr(err instanceof Error ? err.message : String(err));

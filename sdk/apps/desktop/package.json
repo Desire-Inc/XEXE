@@ -1,0 +1,23 @@
+{
+	"name": "@xexe/desktop",
+	"description": "XEXE desktop-first Agent Workbench shell with IDE, terminal, CLI, Git, Kanban, agents, MCP, providers, tests, review, and automation panels.",
+	"version": "0.1.0",
+	"type": "module",
+	"private": true,
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"scripts": {
+		"build": "bun tsc -p tsconfig.json",
+		"typecheck": "bun tsc -p tsconfig.json --noEmit",
+		"test": "vitest run --config vitest.config.ts"
+	},
+	"dependencies": {
+		"@xexe/platform": "workspace:*"
+	},
+	"devDependencies": {
+		"@types/bun": "^1.3.13",
+		"@types/node": "^25.3.5",
+		"typescript": "^5.9.3",
+		"vitest": "^4.0.18"
+	}
+}
